@@ -1,0 +1,15 @@
+Metadata-Version: 2.4
+Name: SPI-Py
+Version: 1.0
+Summary: SPI-Py: Hardware SPI as a C Extension for Python
+Home-page: https://github.com/lthiery/SPI-Py
+Download-URL: https://github.com/lthiery/SPI-Py/archive/master.zip
+Author: Louis Thiery
+License: GPL-v2
+Platform: Linux
+Dynamic: author
+Dynamic: download-url
+Dynamic: home-page
+Dynamic: license
+Dynamic: platform
+Dynamic: summary

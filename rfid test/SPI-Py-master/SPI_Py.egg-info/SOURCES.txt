@@ -1,0 +1,7 @@
+README.md
+setup.py
+spi.c
+SPI_Py.egg-info/PKG-INFO
+SPI_Py.egg-info/SOURCES.txt
+SPI_Py.egg-info/dependency_links.txt
+SPI_Py.egg-info/top_level.txt
