@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="login-layout">
+    <section class="hero-panel">
+        <p class="eyebrow">CMPE 246 Final Project</p>
+        <h1>Smart IoT Access Control and Attendance System</h1>
+        <p class="hero-copy">
+            A security-focused IoT platform that validates RFID cards, controls access decisions,
+            stores timestamped attendance events, and gives administrators a central place to monitor
+            activity, manage users, and export records.
+        </p>
+        <div class="hero-grid">
+            <article class="hero-stat">
+                <span>Project</span>
+                <strong>RFID Access and Attendance</strong>
+            </article>
+            <article class="hero-stat">
+                <span>Contributors</span>
+                <strong>Murat Guvenc, Yanzie Adam Teodosio</strong>
+            </article>
+            <article class="hero-stat">
+                <span>Platform</span>
+                <strong>Raspberry Pi, Flask, SQLite</strong>
+            </article>
+        </div>
+    </section>
+
+    <section class="login-card">
+        <p class="eyebrow">Admin Access</p>
+        <h2>Sign in to the dashboard</h2>
+        <form method="post" class="login-form">
+            <label>
+                <span>Username</span>
+                <input type="text" name="username" placeholder="admin" required>
+            </label>
+            <label>
+                <span>Password</span>
+                <input type="password" name="password" placeholder="Enter password" required>
+            </label>
+            <button type="submit" class="button button-primary">Open Dashboard</button>
+        </form>
+        <p class="login-note">
+            Default demo login: <code>admin</code> / <code>123</code>
+        </p>
+    </section>
+</main>
+{% endblock %}

@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="dashboard-layout">
+    <header class="topbar">
+        <div>
+            <p class="eyebrow">Security Dashboard</p>
+            <h1>Smart IoT Access Control and Attendance System</h1>
+            <p class="topbar-copy">
+                Central monitoring view for RFID access requests, attendance history, user registration,
+                and exportable records from the integrated door-access system.
+            </p>
+        </div>
+        <div class="topbar-actions">
+            <a class="button button-secondary" href="{{ url_for('export_attendance') }}">Export CSV</a>
+            <form method="post" action="{{ url_for('logout') }}">
+                <button type="submit" class="button button-ghost">Log Out</button>
+            </form>
+        </div>
+    </header>
+
+    <section class="overview-grid">
+        <article class="panel overview-panel">
+            <p class="eyebrow">Project Description</p>
+            <h2>Security-Focused IoT Monitoring Platform</h2>
+            <p class="panel-copy">
+                This project combines an RC522 RFID reader, Raspberry Pi hardware, a Flask backend,
+                and an SQLite database to create a smart access control and attendance platform.
+                Each RFID scan is checked against registered users, turned into an allow or deny
+                decision for the physical system, and stored as a timestamped attendance event.
+                The dashboard lets administrators track activity in one place, manage registered cards,
+                observe access trends, and export records for reporting or submission.
+            </p>
+            <div class="project-chip-grid">
+                <span class="project-chip">RFID Validation</span>
+                <span class="project-chip">Access Decisions</span>
+                <span class="project-chip">Attendance Logging</span>
+                <span class="project-chip">Admin Control</span>
+                <span class="project-chip">CSV Export</span>
+                <span class="project-chip">Trend Monitoring</span>
+            </div>
+        </article>
+
+        <article class="panel detail-panel">
+            <p class="eyebrow">Project Details</p>
+            <h2>Team and Identity</h2>
+            <div class="detail-list">
+                <div class="detail-row">
+                    <span>Project</span>
+                    <strong>Smart IoT Access Control and Attendance System</strong>
+                </div>
+                <div class="detail-row">
+                    <span>Name</span>
+                    <strong>Murat Guvenc</strong>
+                </div>
+                <div class="detail-row">
+                    <span>Contributors</span>
+                    <strong>Murat Guvenc, Yanzie Adam Teodosio</strong>
+                </div>
+                <div class="detail-row">
+                    <span>Course</span>
+                    <strong>CMPE 246 Computer Engineering Design Studio</strong>
+                </div>
+                <div class="detail-row">
+                    <span>Stack</span>
+                    <strong>Raspberry Pi, RC522 RFID, Flask, SQLite, HTML, CSS, JavaScript</strong>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <section class="metrics-grid" aria-label="System summary">
+        <article class="metric-card">
+            <span>Total Users</span>
+            <strong id="metric-total-users">{{ summary.total_users }}</strong>
+            <small>Registered RFID cards in the system</small>
+        </article>
+        <article class="metric-card accent-teal">
+            <span>Active Users</span>
+            <strong id="metric-active-users">{{ summary.active_users }}</strong>
+            <small>Cards currently allowed to enter</small>
+        </article>
+        <article class="metric-card accent-orange">
+            <span>Granted Today</span>
+            <strong id="metric-granted-today">{{ summary.granted_today }}</strong>
+            <small>Successful scans recorded today</small>
+        </article>
+        <article class="metric-card accent-sand">
+            <span>Denied Today</span>
+            <strong id="metric-denied-today">{{ summary.denied_today }}</strong>
+            <small>Unknown or inactive card attempts</small>
+        </article>
+    </section>
+
+    <section class="content-grid">
+        <article class="panel">
+            <div class="panel-heading">
+                <div>
+                    <p class="eyebrow">Register User</p>
+                    <h2>Add a new RFID card</h2>
+                </div>
+                <span class="tag">Signed in as {{ admin_username }}</span>
+            </div>
+            <form id="user-form" class="stack-form">
+                <label>
+                    <span>Name</span>
+                    <input type="text" name="name" placeholder="Student or staff name" required>
+                </label>
+                <label>
+                    <span>RFID UID</span>
+                    <input type="text" name="rfid_uid" placeholder="Example: 12-34-56-78" required>
+                </label>
+                <label>
+                    <span>Role</span>
+                    <select name="role">
+                        <option value="student">Student</option>
+                        <option value="faculty">Faculty</option>
+                        <option value="staff">Staff</option>
+                        <option value="guest">Guest</option>
+                    </select>
+                </label>
+                <label class="checkbox-row">
+                    <input type="checkbox" name="is_active" checked>
+                    <span>Allow this card to unlock access immediately</span>
+                </label>
+                <button type="submit" class="button button-primary">Register User</button>
+            </form>
+            <p class="inline-status" id="form-status">Ready to register new cards.</p>
+        </article>
+
+        <article class="panel">
+            <div class="panel-heading">
+                <div>
+                    <p class="eyebrow">User Directory</p>
+                    <h2>Registered access cards</h2>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>UID</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-table-body"></tbody>
+                </table>
+            </div>
+        </article>
+    </section>
+
+    <section class="content-grid lower-grid">
+        <article class="panel">
+            <div class="panel-heading">
+                <div>
+                    <p class="eyebrow">Attendance Trend</p>
+                    <h2>Last 7 days</h2>
+                </div>
+                <span class="tag" id="latest-scan-tag">
+                    Last scan: {{ summary.latest_scan_at or 'No scans yet' }}
+                </span>
+            </div>
+            <div class="chart-area">
+                <canvas id="attendance-chart" aria-label="Attendance chart"></canvas>
+            </div>
+        </article>
+
+        <article class="panel">
+            <div class="panel-heading">
+                <div>
+                    <p class="eyebrow">Live Activity</p>
+                    <h2>Recent attendance log</h2>
+                </div>
+                <button type="button" class="button button-secondary" id="refresh-dashboard">Refresh</button>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Name</th>
+                            <th>UID</th>
+                            <th>Status</th>
+                            <th>Note</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendance-table-body"></tbody>
+                </table>
+            </div>
+        </article>
+    </section>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.dashboardData = {{ {
+        "summary": summary,
+        "users": users,
+        "attendance": recent_attendance,
+        "chartData": chart_data
+    } | tojson }};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+{% endblock %}
