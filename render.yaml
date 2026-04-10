@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: cmpe246-access-control
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python seed_demo_data.py && gunicorn "software_system:create_app()" --bind 0.0.0.0:$PORT
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        value: "123"

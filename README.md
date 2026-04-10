@@ -42,11 +42,16 @@ cmpe246_project/
 │   └── static/                          # CSS and JavaScript
 │
 ├── CMPE 246 IoT Project Code/
-│   ├── Backend_Hardware_Client.py       # Raspberry Pi RFID client (production)
-│   ├── Hardware_code.py                 # Standalone prototype (no backend needed)
-│   ├── pi_preflight_check.py            # Pre-demo hardware + connectivity check
-│   ├── MFRC522.py                       # RC522 driver library
-│   └── requirements.txt                 # Pi dependencies (RPi.GPIO, spidev, requests)
+│   ├── Hardware System/
+│   │   ├── Backend_Hardware_Client.py   # Raspberry Pi RFID client (production)
+│   │   ├── Hardware_code.py             # Standalone prototype (no backend needed)
+│   │   ├── pi_preflight_check.py        # Pre-demo hardware + connectivity check
+│   │   ├── MFRC522.py                   # RC522 driver library
+│   │   └── requirements.txt             # Pi dependencies (RPi.GPIO, spidev, requests)
+│   └── RFID Module Library Code/        # Reference library (read/write examples)
+│
+├── Media/                               # Hardware photos, wiring diagrams, demo video
+├── UML_Diagrams/                        # Class, component, sequence diagrams
 │
 └── tests/
     └── test_app.py                      # Unit tests for the Flask app
@@ -123,8 +128,8 @@ sudo raspi-config
 
 ### Step 3 — Install Pi dependencies
 ```bash
-cd "CMPE 246 IoT Project Code"
-pip install -r requirements.txt
+cd "CMPE 246 IoT Project Code/Hardware System"
+pip install --break-system-packages -r requirements.txt
 ```
 
 ### Step 4 — Run the preflight check
@@ -137,7 +142,7 @@ Both checks should print `[PASS]`. If the backend check fails, make sure the Fla
 
 ### Step 5 — Start the RFID client
 ```bash
-sudo python3 Backend_Hardware_Client.py
+sudo -E ACCESS_BACKEND_URL=http://<SERVER_IP>:5000 python3 Backend_Hardware_Client.py
 ```
 
 ### Step 6 — Register a card
